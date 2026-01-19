@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Đặt hàng thành công - Trạm Sách{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">✓</div>
+    <h1 class="success-title">Đặt hàng thành công!</h1>
+    <p class="success-message">Cảm ơn bạn đã mua sắm tại Trạm Sách</p>
+    
+    <div id="order-info" style="background: var(--bg-secondary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin: var(--spacing-lg) 0;">
+        <!-- Order info will be loaded here -->
+    </div>
+    
+    <div style="display: flex; gap: var(--spacing-sm); justify-content: center;">
+        <a href="/category/all" class="btn btn-primary">Tiếp tục mua sắm</a>
+        <a href="/" class="btn btn-secondary">Về trang chủ</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderNumber = urlParams.get('order_number');
+    
+    if (orderNumber) {
+        try {
+            const response = await fetch(`/api/checkout/order/${orderNumber}`);
+            const order = await response.json();
+            
+            const infoContainer = document.getElementById('order-info');
+            infoContainer.innerHTML = `
+                <h3 style="margin-bottom: var(--spacing-md);">Thông tin đơn hàng</h3>
+                <div style="text-align: left;">
+                    <p><strong>Mã đơn hàng:</strong> ${order.order_number}</p>
+                    <p><strong>Khách hàng:</strong> ${order.customer_name}</p>
+                    <p><strong>Tổng tiền:</strong> ${BookStore.formatPrice(order.total)}</p>
+                    <p><strong>Ngày đặt:</strong> ${BookStore.formatDate(order.created_at)}</p>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error loading order info:', error);
+        }
+    }
+});
+</script>
+{% endblock %}
+

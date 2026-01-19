@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Tài khoản - Trạm Sách{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px; margin: var(--spacing-xl) auto;">
+    <h1 style="font-size: 40px; font-weight: 600; margin-bottom: var(--spacing-lg);">Tài khoản của tôi</h1>
+    
+    <div id="user-info" style="background: var(--bg-secondary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+        <!-- User info will be loaded here -->
+    </div>
+    
+    <div style="text-align: center;">
+        <a href="/orders" class="btn btn-primary">Xem đơn hàng</a>
+        <button onclick="BookStore.logout()" class="btn btn-secondary" style="margin-left: var(--spacing-sm);">Đăng xuất</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/auth/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            const infoContainer = document.getElementById('user-info');
+            infoContainer.innerHTML = `
+                <h3 style="margin-bottom: var(--spacing-md);">Thông tin tài khoản</h3>
+                <div style="text-align: left;">
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Họ và tên:</strong> ${user.full_name || 'Chưa cập nhật'}</p>
+                    <p><strong>Số điện thoại:</strong> ${user.phone || 'Chưa cập nhật'}</p>
+                    <p><strong>Vai trò:</strong> ${user.role === 'admin' ? 'Quản trị viên' : 'Người dùng'}</p>
+                </div>
+            `;
+        } else {
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        console.error('Error loading user info:', error);
+        window.location.href = '/login';
+    }
+});
+</script>
+{% endblock %}
+

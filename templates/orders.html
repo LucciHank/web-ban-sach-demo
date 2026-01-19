@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Đơn hàng của tôi - Trạm Sách{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: var(--spacing-xl) auto;">
+    <h1 style="font-size: 40px; font-weight: 600; margin-bottom: var(--spacing-lg); letter-spacing: -0.5px;">Đơn hàng của tôi</h1>
+    
+    <div id="orders-list">
+        <div style="text-align: center; padding: var(--spacing-xl);">
+            <div class="skeleton skeleton-text" style="width: 200px; margin: 0 auto;"></div>
+        </div>
+    </div>
+    
+    <div id="empty-orders" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📦</div>
+        <h3>Chưa có đơn hàng nào</h3>
+        <p>Hãy mua sắm để tạo đơn hàng đầu tiên của bạn</p>
+        <a href="/category/all" class="btn btn-primary" style="margin-top: var(--spacing-md);">Xem sách</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/orders/', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const orders = await response.json();
+            const ordersContainer = document.getElementById('orders-list');
+            const emptyOrders = document.getElementById('empty-orders');
+            
+            if (orders.length === 0) {
+                ordersContainer.style.display = 'none';
+                emptyOrders.style.display = 'block';
+            } else {
+                emptyOrders.style.display = 'none';
+                ordersContainer.innerHTML = '';
+                
+                orders.forEach(order => {
+                    const orderCard = createOrderCard(order);
+                    ordersContainer.appendChild(orderCard);
+                });
+            }
+        } else if (response.status === 401) {
+            window.location.href = '/login';
+        } else {
+            BookStore.showNotification('Có lỗi xảy ra khi tải đơn hàng', 'error');
+        }
+    } catch (error) {
+        console.error('Error loading orders:', error);
+        BookStore.showNotification('Có lỗi xảy ra', 'error');
+    }
+});
+
+function createOrderCard(order) {
+    const card = document.createElement('div');
+    card.className = 'cart-item';
+    card.style.marginBottom = 'var(--spacing-md)';
+    
+    const statusColors = {
+        'pending': '#ff9500',
+        'confirmed': '#34c759',
+        'shipping': '#0071e3',
+        'delivered': '#34c759',
+        'cancelled': '#ff3b30'
+    };
+    
+    const statusTexts = {
+        'pending': 'Chờ xử lý',
+        'confirmed': 'Đã xác nhận',
+        'shipping': 'Đang giao hàng',
+        'delivered': 'Đã giao hàng',
+        'cancelled': 'Đã hủy'
+    };
+    
+    let itemsHtml = '';
+    order.items.forEach(item => {
+        itemsHtml += `
+            <div style="display: flex; justify-content: space-between; padding: var(--spacing-xs) 0; border-bottom: 1px solid var(--border-color);">
+                <span>${item.book_title} x ${item.quantity}</span>
+                <span>${BookStore.formatPrice(item.subtotal)}</span>
+            </div>
+        `;
+    });
+    
+    card.innerHTML = `
+        <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-sm);">
+                <div>
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Đơn hàng ${order.order_number}</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px;">${BookStore.formatDate(order.created_at)}</p>
+                </div>
+                <span style="background: ${statusColors[order.status] || '#86868b'}; color: white; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;">
+                    ${statusTexts[order.status] || order.status}
+                </span>
+            </div>
+            
+            <div style="margin-bottom: var(--spacing-sm);">
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;"><strong>Người nhận:</strong> ${order.customer_name}</p>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;"><strong>Điện thoại:</strong> ${order.customer_phone}</p>
+                <p style="font-size: 14px; color: var(--text-secondary);"><strong>Địa chỉ:</strong> ${order.customer_address}</p>
+            </div>
+            
+            <div style="background: var(--bg-secondary); padding: var(--spacing-sm); border-radius: var(--radius-sm); margin-bottom: var(--spacing-sm);">
+                ${itemsHtml}
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: var(--spacing-sm); border-top: 1px solid var(--border-color);">
+                <span style="font-size: 14px; color: var(--text-secondary);">${order.items.length} sản phẩm</span>
+                <span style="font-size: 20px; font-weight: 600; color: var(--primary-color);">${BookStore.formatPrice(order.total)}</span>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+</script>
+{% endblock %}
+

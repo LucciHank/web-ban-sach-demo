@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ - Trạm Sách{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-banner-modern">
+    <div class="container">
+        <div class="hero-content-modern">
+            <div class="hero-text-modern">
+                <div class="hero-badge-modern">Xu hướng 2024</div>
+                <h1 class="hero-title-modern text-gradient">Khám phá<br>Thế giới tri thức</h1>
+                <p class="hero-subtitle-modern">Hơn 10,000 đầu sách tuyển chọn với ưu đãi đặc quyền. Giao hàng siêu tốc
+                    trong 2h.</p>
+                <div class="hero-actions-modern">
+                    <a href="/category/all" class="btn btn-primary btn-large">Mua sắm ngay</a>
+                    <a href="/category/self-help" class="btn btn-secondary btn-large">Tìm hiểu thêm</a>
+                </div>
+                <div class="hero-stats" style="margin-top: 40px; display: flex; gap: 32px;">
+                    <div>
+                        <div style="font-size: 24px; font-weight: 700;">10k+</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">Đầu sách</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 24px; font-weight: 700;">4.9★</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">Tin dùng</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image-modern">
+                <div class="hero-book-stack" id="hero-book-stack">
+                    <!-- Books will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="container" style="margin-top: var(--spacing-xxl);">
+    <div class="section-header-modern">
+        <div>
+            <h2 class="section-title-modern">Danh mục nổi bật</h2>
+            <p class="section-subtitle-modern">Khám phá các thể loại sách đa dạng</p>
+        </div>
+        <a href="/category/all" class="btn btn-secondary">Xem tất cả</a>
+    </div>
+
+    <div id="categories" class="category-grid-modern">
+        <!-- Categories will be loaded here -->
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="container" style="margin-top: var(--spacing-xxl); padding-bottom: var(--spacing-xl);">
+    <div class="section-header-modern">
+        <div>
+            <h2 class="section-title-modern">Sách nổi bật</h2>
+            <p class="section-subtitle-modern">Những cuốn sách được yêu thích nhất tuần này</p>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 13px; color: var(--text-secondary);">Ưu đãi kết thúc sau:</span>
+            <div style="font-size: 17px; font-weight: 600; color: var(--primary-color);">
+                <span id="hours">02</span>:<span id="minutes">35</span>:<span id="seconds">40</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="featured-books" class="product-grid-modern">
+        <!-- Books will be loaded here -->
+    </div>
+</section>
+
+<!-- New Arrivals -->
+<section class="container" style="margin-top: var(--spacing-xl);">
+    <div class="section-header-modern">
+        <div>
+            <h2 class="section-title-modern">Sách mới</h2>
+            <p class="section-subtitle-modern">Cập nhật những cuốn sách mới nhất</p>
+        </div>
+        <a href="/category/all?sort_by=newest" class="btn btn-secondary">Xem thêm</a>
+    </div>
+
+    <div id="new-books" class="product-grid-modern">
+        <!-- New books will be loaded here -->
+    </div>
+</section>
+
+<!-- Category: Văn học -->
+<section class="container" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-xxl);">
+    <div class="section-header-modern">
+        <div>
+            <h2 class="section-title-modern">Văn học</h2>
+            <p class="section-subtitle-modern">Những tác phẩm văn học kinh điển và hiện đại</p>
+        </div>
+        <a href="/category/van-hoc" class="btn btn-secondary">Xem tất cả</a>
+    </div>
+
+    <div id="literature-books" class="product-grid-modern">
+        <!-- Books will be loaded here -->
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-content">
+            <h2>Gia nhập cộng đồng</h2>
+            <p>Nhận thông báo đặc quyền về các đầu sách giới hạn và quà tặng bí mật.</p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                <div class="input-group">
+                    <input type="email" placeholder="Email của bạn" required>
+                    <button type="submit" class="btn btn-primary">Đăng ký ngay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Load hero book stack
+        try {
+            const booksResponse = await fetch('/api/products/?limit=3');
+            const books = await booksResponse.json();
+            const bookStackContainer = document.getElementById('hero-book-stack');
+
+            if (books.length > 0) {
+                bookStackContainer.innerHTML = '';
+                books.forEach((book, index) => {
+                    const bookItem = document.createElement('div');
+                    bookItem.className = `book-stack-item book-${index + 1}`;
+                    bookItem.innerHTML = `<img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgMzAwIDQwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2Y1ZjVmNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzg2ODY4YiI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'">`;
+                    bookStackContainer.appendChild(bookItem);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading hero books:', error);
+        }
+
+        // Load categories
+        try {
+            const catResponse = await fetch('/api/products/categories/all');
+            const categories = await catResponse.json();
+            const catContainer = document.getElementById('categories');
+            const icons = ['📚', '💡', '📖', '🎨', '🔬'];
+
+            categories.forEach((cat, index) => {
+                const card = document.createElement('a');
+                card.href = `/category/${cat.slug}`;
+                card.className = 'category-card-modern';
+                card.innerHTML = `
+                    <span class="category-icon">${icons[index % icons.length]}</span>
+                    <h3>${cat.name}</h3>
+                `;
+                catContainer.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+
+        // Load sections helper
+        const loadSection = async (url, containerId) => {
+            try {
+                const response = await fetch(url);
+                const books = await response.json();
+                const container = document.getElementById(containerId);
+                if (container) {
+                    books.forEach(book => container.appendChild(createProductCard(book)));
+                }
+            } catch (error) { console.error(`Error loading ${containerId}:`, error); }
+        };
+
+        loadSection('/api/products/?limit=8', 'featured-books');
+        loadSection('/api/products/?limit=4&sort_by=newest', 'new-books');
+        loadSection('/api/products/?limit=4&offset=5', 'literature-books');
+
+        // Timer
+        let timeLeft = 2 * 3600 + 35 * 60 + 40;
+        setInterval(() => {
+            const h = Math.floor(timeLeft / 3600);
+            const m = Math.floor((timeLeft % 3600) / 60);
+            const s = timeLeft % 60;
+            document.getElementById('hours').textContent = String(h).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+            timeLeft = timeLeft > 0 ? timeLeft - 1 : 2 * 3600;
+        }, 1000);
+    });
+
+    function createProductCard(book) {
+        const card = document.createElement('a');
+        card.href = `/product/${book.id}`;
+        card.className = 'product-card-modern';
+        card.innerHTML = `
+            <div style="position: relative; overflow: hidden; border-radius: 16px;">
+                <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="product-image-modern" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgMzAwIDQwMCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2Y1ZjVmNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzg2ODY4YiI+Tm8gSW1hZ2U8L3RleHQ+PC9zdmc+'">
+            </div>
+            <div class="product-info-modern">
+                <p class="product-category-modern">${book.category_name || 'Sách'}</p>
+                <h3 class="product-title-modern">${book.title}</h3>
+                <p class="product-author-modern">${book.authors}</p>
+                <div class="product-rating-modern">⭐ ${book.rating_avg.toFixed(1)}</div>
+                <p class="product-price-modern">${BookStore.formatPrice(book.price_vnd)}</p>
+            </div>
+        `;
+        return card;
+    }
+
+    function handleNewsletter(event) {
+        event.preventDefault();
+        BookStore.showNotification('Cảm ơn bạn đã đăng ký!', 'success');
+    }
+</script>
+{% endblock %}

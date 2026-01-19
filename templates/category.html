@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách sản phẩm - Trạm Sách{% endblock %}
+
+{% block content %}
+<div class="category-page-container">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="category-header">
+            <h1 id="category-title" class="category-page-title">Danh sách sản phẩm</h1>
+            <p class="category-page-subtitle">Khám phá bộ sưu tập sách đa dạng của chúng tôi</p>
+        </div>
+        
+        <!-- Filters Section -->
+        <div class="filters-section-modern">
+            <div class="filters-header">
+                <h3 class="filters-title">Bộ lọc</h3>
+                <button class="filters-toggle" onclick="toggleFilters()" id="filters-toggle">Ẩn bộ lọc</button>
+            </div>
+            <div class="filters-content" id="filters-content">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label class="filter-label">Tìm kiếm</label>
+                        <input type="text" id="search-input" class="filter-input-modern" placeholder="Nhập tên sách, tác giả...">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">Danh mục</label>
+                        <select id="category-filter" class="filter-select-modern">
+                            <option value="">Tất cả danh mục</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label class="filter-label">Giá từ</label>
+                        <input type="number" id="price-min" class="filter-input-modern" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">Đến</label>
+                        <input type="number" id="price-max" class="filter-input-modern" placeholder="Không giới hạn" min="0">
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">Sắp xếp</label>
+                        <select id="sort-by" class="filter-select-modern">
+                            <option value="newest">Mới nhất</option>
+                            <option value="price_asc">Giá tăng dần</option>
+                            <option value="price_desc">Giá giảm dần</option>
+                            <option value="rating">Đánh giá cao</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-primary" onclick="applyFilters()">Áp dụng bộ lọc</button>
+                    <button class="btn btn-secondary" onclick="resetFilters()">Đặt lại</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div class="results-section">
+            <div class="results-header">
+                <div id="results-info" class="results-count">Đang tải...</div>
+            </div>
+            
+            <div id="products-grid" class="product-grid-modern">
+                <!-- Products will be loaded here -->
+            </div>
+            
+            <div id="loading" class="loading-state" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Đang tải sách...</p>
+            </div>
+            
+            <div id="empty-state" class="empty-state-modern" style="display: none;">
+                <div class="empty-state-icon">📚</div>
+                <h3>Không tìm thấy sách nào</h3>
+                <p>Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác</p>
+                <a href="/category/all" class="btn btn-primary" style="margin-top: var(--spacing-md);">Xem tất cả sách</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-page-container {
+    padding: var(--spacing-xl) 0;
+    min-height: calc(100vh - 300px);
+}
+
+.category-header {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.category-page-title {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
+}
+
+.category-page-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+.filters-section-modern {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filters-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.filters-toggle {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.filter-input-modern,
+.filter-select-modern {
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    background: var(--bg-primary);
+    transition: all 0.2s;
+}
+
+.filter-input-modern:focus,
+.filter-select-modern:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.results-section {
+    margin-top: var(--spacing-xl);
+}
+
+.results-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.results-count {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.loading-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--spacing-md);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-state-modern {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state-modern h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-state-modern p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Product Card Styles - Import from home page */
+.product-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.product-card-modern {
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border: 1px solid transparent;
+}
+
+.product-card-modern:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.product-image-modern {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    background: var(--bg-secondary);
+}
+
+.product-info-modern {
+    padding: var(--spacing-md);
+}
+
+.product-category-modern {
+    font-size: 12px;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.product-title-modern {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 44px;
+}
+
+.product-author-modern {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.product-rating-modern {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.product-price-modern {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .category-page-title {
+        font-size: 32px;
+    }
+    
+    .category-page-subtitle {
+        font-size: 16px;
+    }
+    
+    .filters-section-modern {
+        padding: var(--spacing-md);
+    }
+    
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+    }
+    
+    .product-grid-modern {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+    }
+    
+    .product-image-modern {
+        height: 240px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentOffset = 0;
+const limit = 20;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load categories
+    try {
+        const response = await fetch('/api/products/categories/all');
+        const categories = await response.json();
+        const select = document.getElementById('category-filter');
+        categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name;
+            select.appendChild(option);
+        });
+        
+        // Set selected category if on category page
+        const categorySlug = '{{ category_slug }}';
+        if (categorySlug && categorySlug !== 'all') {
+            try {
+                const catResponse = await fetch(`/api/products/categories/by-slug/${categorySlug}`);
+                const category = await catResponse.json();
+                select.value = category.id;
+                document.getElementById('category-title').textContent = category.name;
+            } catch (error) {
+                console.error('Error loading category:', error);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
+    
+    // Get query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    if (query) {
+        document.getElementById('search-input').value = query;
+    }
+    
+    // Load initial products
+    applyFilters();
+    
+    // Search on Enter
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
+    });
+});
+
+function toggleFilters() {
+    const content = document.getElementById('filters-content');
+    const toggle = document.getElementById('filters-toggle');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggle.textContent = 'Ẩn bộ lọc';
+    } else {
+        content.style.display = 'none';
+        toggle.textContent = 'Hiện bộ lọc';
+    }
+}
+
+function resetFilters() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('category-filter').value = '';
+    document.getElementById('price-min').value = '';
+    document.getElementById('price-max').value = '';
+    document.getElementById('sort-by').value = 'newest';
+    applyFilters();
+}
+
+async function applyFilters() {
+    const query = document.getElementById('search-input').value;
+    const categoryId = document.getElementById('category-filter').value;
+    const priceMin = document.getElementById('price-min').value;
+    const priceMax = document.getElementById('price-max').value;
+    const sortBy = document.getElementById('sort-by').value;
+    
+    currentOffset = 0;
+    
+    const params = new URLSearchParams();
+    if (query) params.append('q', query);
+    if (categoryId) params.append('category_id', categoryId);
+    if (priceMin) params.append('price_min', priceMin);
+    if (priceMax) params.append('price_max', priceMax);
+    params.append('sort_by', sortBy);
+    params.append('limit', limit);
+    params.append('offset', currentOffset);
+    
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('products-grid').innerHTML = '';
+    document.getElementById('empty-state').style.display = 'none';
+    
+    try {
+        const response = await fetch(`/api/search/?${params.toString()}`);
+        const data = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results-info').textContent = `Tìm thấy ${data.total} cuốn sách`;
+        
+        if (data.books.length === 0) {
+            document.getElementById('empty-state').style.display = 'block';
+        } else {
+            data.books.forEach(book => {
+                const card = createProductCard(book);
+                document.getElementById('products-grid').appendChild(card);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('loading').style.display = 'none';
+    }
+}
+
+function createProductCard(book) {
+    const card = document.createElement('a');
+    card.href = `/product/${book.id}`;
+    card.className = 'product-card-modern';
+    
+    card.innerHTML = `
+        <div style="position: relative;">
+            ${book.stock < 10 ? '<span style="position: absolute; top: 12px; right: 12px; background: #ff3b30; color: white; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; z-index: 1;">GIẢM GIÁ</span>' : ''}
+            <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="product-image-modern" onerror="this.src='/static/images/placeholder.jpg'">
+        </div>
+        <div class="product-info-modern">
+            <p class="product-category-modern">${book.category_name || 'Sách'}</p>
+            <h3 class="product-title-modern">${book.title}</h3>
+            <p class="product-author-modern">${book.authors}</p>
+            <div class="product-rating-modern">
+                ⭐ ${book.rating_avg.toFixed(1)} <span style="color: var(--text-secondary); font-size: 12px;">(${Math.floor(Math.random() * 200 + 50)} đánh giá)</span>
+            </div>
+            <p class="product-price-modern">${BookStore.formatPrice(book.price_vnd)}</p>
+        </div>
+    `;
+    
+    return card;
+}
+</script>
+{% endblock %}

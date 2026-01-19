@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trạm Sách - Cửa hàng sách trực tuyến{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for luxury icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-book-open"></i></span>
+                <span class="logo-text">Trạm Sách</span>
+            </a>
+
+            <nav class="nav">
+                <a href="/" class="nav-link">Trang chủ</a>
+                <a href="/category/all" class="nav-link">Cửa hàng</a>
+                <a href="/about" class="nav-link">Khám phá</a>
+                <a href="/contact" class="nav-link">Liên hệ</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm tác phẩm..."
+                        autocomplete="off">
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                </div>
+
+                <div class="user-menu" id="auth-section">
+                    <a href="/cart" class="cart-icon-wrapper">
+                        <div class="cart-icon">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </a>
+
+                    <!-- Auth Content w/ JS -->
+                    <div class="auth-buttons" id="auth-buttons" style="display: none; gap: 12px; align-items: center;">
+                        <a href="/login" class="btn btn-light">Đăng nhập</a>
+                        <a href="/register" class="btn btn-primary"
+                            style="padding: 10px 24px; border-radius: 20px; color: white; text-decoration: none;">Đăng
+                            ký</a>
+                    </div>
+
+                    <div class="user-dropdown" id="user-menu" style="display: none;">
+                        <div class="user-avatar" id="user-avatar" onclick="toggleUserMenu()">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        <div class="user-dropdown-menu" id="user-dropdown-menu">
+                            <a href="/profile" id="profile-link"><i class="fa-solid fa-circle-user"></i> Tài khoản</a>
+                            <a href="/orders" id="orders-link"><i class="fa-solid fa-receipt"></i> Đơn hàng</a>
+                            <a href="/admin" id="admin-link" style="display: none;"><i
+                                    class="fa-solid fa-user-gear"></i>
+                                Quản trị</a>
+                            <a href="#" id="logout-link" onclick="logout()"><i
+                                    class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Cloud-inspired Divider -->
+    <div style="height: 100px; background: linear-gradient(to bottom, transparent, #f5f5f7);"></div>
+
+    <!-- Luxury Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Trạm Sách</span>
+                    </div>
+                    <p class="footer-desc">Khám phá thế giới tri thức qua từng trang sách. Trạm Sách cam kết mang đến
+                        những trải nghiệm đọc tuyệt vời nhất cho bạn.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Khám phá</h4>
+                    <ul>
+                        <li><a href="/about">Về chúng tôi</a></li>
+                        <li><a href="/category/all">Cửa hàng</a></li>
+                        <li><a href="/news">Tạp chí</a></li>
+                        <li><a href="/careers">Tuyển dụng</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="/faq">Câu hỏi thường gặp</a></li>
+                        <li><a href="/shipping">Chính sách vận chuyển</a></li>
+                        <li><a href="/returns">Đổi trả & Hoàn tiền</a></li>
+                        <li><a href="/policy">Bảo mật thông tin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-newsletter">
+                    <h4>Đăng ký nhận tin</h4>
+                    <p>Nhận thông tin về sách mới và ưu đãi đặc biệt.</p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Cảm ơn bạn đã đăng ký!');">
+                        <div class="input-group">
+                            <input type="email" placeholder="Email của bạn..." required>
+                            <button type="submit"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Trạm Sách. Built with <i class="fa-solid fa-heart" style="color: #ff3b30;"></i> for
+                    readers.</p>
+                <div class="footer-links">
+                    <a href="#">Điều khoản</a>
+                    <a href="#">Quyền riêng tư</a>
+                    <a href="#">Cookie</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

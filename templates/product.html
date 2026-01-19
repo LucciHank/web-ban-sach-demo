@@ -1,0 +1,609 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết sách - Trạm Sách{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <a href="/">Trang chủ</a>
+        <span>/</span>
+        <a href="/category/all">Sách</a>
+        <span>/</span>
+        <span id="breadcrumb-title">Chi tiết</span>
+    </div>
+    
+    <div id="product-detail" class="product-detail-modern">
+        <!-- Product will be loaded here -->
+    </div>
+    
+    <!-- Tabs Section -->
+    <div class="product-tabs">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('description')">Mô tả</button>
+            <button class="tab-btn" onclick="showTab('reviews')">Đánh giá & Nhận xét</button>
+        </div>
+        
+        <div id="tab-description" class="tab-content active">
+            <div id="product-description-full"></div>
+        </div>
+        
+        <div id="tab-reviews" class="tab-content">
+            <div class="reviews-section">
+                <div class="rating-summary">
+                    <div class="rating-score">
+                        <div class="score-number" id="rating-score">4.5</div>
+                        <div class="score-label">trên 5</div>
+                        <div class="score-stars" id="rating-stars">⭐⭐⭐⭐⭐</div>
+                        <div class="score-count" id="rating-count">(245 đánh giá)</div>
+                    </div>
+                    <div class="rating-breakdown">
+                        <div class="rating-bar-item">
+                            <span>5 sao</span>
+                            <div class="rating-bar">
+                                <div class="rating-bar-fill" style="width: 80%;"></div>
+                            </div>
+                            <span>80%</span>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>4 sao</span>
+                            <div class="rating-bar">
+                                <div class="rating-bar-fill" style="width: 15%;"></div>
+                            </div>
+                            <span>15%</span>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>3 sao</span>
+                            <div class="rating-bar">
+                                <div class="rating-bar-fill" style="width: 3%;"></div>
+                            </div>
+                            <span>3%</span>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>2 sao</span>
+                            <div class="rating-bar">
+                                <div class="rating-bar-fill" style="width: 1%;"></div>
+                            </div>
+                            <span>1%</span>
+                        </div>
+                        <div class="rating-bar-item">
+                            <span>1 sao</span>
+                            <div class="rating-bar">
+                                <div class="rating-bar-fill" style="width: 1%;"></div>
+                            </div>
+                            <span>1%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-prompt">
+                    <h4>Đánh giá sản phẩm này</h4>
+                    <p>Chia sẻ suy nghĩ của bạn với các khách hàng khác</p>
+                    <button class="btn btn-outline">Viết đánh giá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.breadcrumbs {
+    padding: var(--spacing-md) 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumbs a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: var(--primary-color);
+}
+
+.product-detail-modern {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl) 0;
+}
+
+.product-gallery-modern {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.product-main-image-modern {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    background: var(--bg-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.product-thumbnails {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.thumbnail {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.product-info-modern-detail {
+    padding: var(--spacing-md) 0;
+}
+
+.product-category-badge {
+    display: inline-block;
+    background: rgba(0, 113, 227, 0.1);
+    color: var(--primary-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.product-title-modern-detail {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.2;
+}
+
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #34c759;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.stock-badge.out-of-stock {
+    background: #ff3b30;
+}
+
+.price-section-modern {
+    margin-bottom: var(--spacing-lg);
+}
+
+.current-price {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-right: var(--spacing-sm);
+}
+
+.original-price {
+    font-size: 24px;
+    color: var(--text-secondary);
+    text-decoration: line-through;
+}
+
+.product-description-modern {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.product-specs-modern {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.spec-item-modern {
+    display: flex;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.spec-item-modern:last-child {
+    border-bottom: none;
+}
+
+.spec-label-modern {
+    font-weight: 600;
+    min-width: 140px;
+    color: var(--text-secondary);
+}
+
+.spec-value-modern {
+    color: var(--text-primary);
+}
+
+.product-actions-modern {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.quantity-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.quantity-label {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.quantity-control-modern-detail {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+}
+
+.quantity-btn-modern-detail {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+}
+
+.quantity-btn-modern-detail:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.quantity-input-modern-detail {
+    width: 60px;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.product-tabs {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--border-color);
+}
+
+.tab-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+    padding: var(--spacing-lg) 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.reviews-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+.rating-summary {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+}
+
+.rating-score {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.score-number {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+}
+
+.score-label {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.score-stars {
+    font-size: 24px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.score-count {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.rating-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.rating-bar-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 14px;
+}
+
+.rating-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rating-bar-fill {
+    height: 100%;
+    background: #ffc107;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.review-prompt {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.review-prompt h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.review-prompt p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+    .product-detail-modern {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-gallery-modern {
+        position: static;
+    }
+    
+    .product-title-modern-detail {
+        font-size: 32px;
+    }
+    
+    .reviews-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-actions-modern {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const productId = {{ product_id }};
+let currentQuantity = 1;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch(`/api/products/${productId}`);
+        const book = await response.json();
+        
+        document.getElementById('breadcrumb-title').textContent = book.title;
+        
+        const container = document.getElementById('product-detail');
+        container.innerHTML = `
+            <div class="product-gallery-modern">
+                <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="product-main-image-modern" id="main-image" onerror="this.src='/static/images/placeholder.jpg'">
+                <div class="product-thumbnails">
+                    <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="thumbnail active" onclick="changeMainImage(this.src)" onerror="this.src='/static/images/placeholder.jpg'">
+                    <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="thumbnail" onclick="changeMainImage(this.src)" onerror="this.src='/static/images/placeholder.jpg'">
+                    <img src="${book.image_url || '/static/images/placeholder.jpg'}" alt="${book.title}" class="thumbnail" onclick="changeMainImage(this.src)" onerror="this.src='/static/images/placeholder.jpg'">
+                </div>
+            </div>
+            <div class="product-info-modern-detail">
+                <div class="product-category-badge">${book.category_name || 'Sách'}</div>
+                <h1 class="product-title-modern-detail">${book.title}</h1>
+                <div class="stock-badge ${book.stock > 0 ? '' : 'out-of-stock'}">
+                    ${book.stock > 0 ? '✓ Còn hàng' : 'Hết hàng'}
+                </div>
+                
+                <div class="price-section-modern">
+                    <span class="current-price">${BookStore.formatPrice(book.price_vnd)}</span>
+                    ${book.price_vnd < 200000 ? `<span class="original-price">${BookStore.formatPrice(book.price_vnd * 1.2)}</span>` : ''}
+                </div>
+                
+                ${book.description ? `
+                    <div class="product-description-modern">
+                        ${book.description.substring(0, 200)}${book.description.length > 200 ? '...' : ''}
+                    </div>
+                ` : ''}
+                
+                <div class="product-specs-modern">
+                    ${book.pages ? `
+                        <div class="spec-item-modern">
+                            <span class="spec-label-modern">Số trang:</span>
+                            <span class="spec-value-modern">${book.pages} trang</span>
+                        </div>
+                    ` : ''}
+                    ${book.publisher ? `
+                        <div class="spec-item-modern">
+                            <span class="spec-label-modern">Nhà xuất bản:</span>
+                            <span class="spec-value-modern">${book.publisher}</span>
+                        </div>
+                    ` : ''}
+                    ${book.publish_year ? `
+                        <div class="spec-item-modern">
+                            <span class="spec-label-modern">Năm xuất bản:</span>
+                            <span class="spec-value-modern">${book.publish_year}</span>
+                        </div>
+                    ` : ''}
+                    <div class="spec-item-modern">
+                        <span class="spec-label-modern">Tác giả:</span>
+                        <span class="spec-value-modern">${book.authors}</span>
+                    </div>
+                    <div class="spec-item-modern">
+                        <span class="spec-label-modern">Tồn kho:</span>
+                        <span class="spec-value-modern">${book.stock > 0 ? `${book.stock} cuốn` : 'Hết hàng'}</span>
+                    </div>
+                </div>
+                
+                <div class="quantity-section">
+                    <span class="quantity-label">Số lượng:</span>
+                    <div class="quantity-control-modern-detail">
+                        <button class="quantity-btn-modern-detail" onclick="changeQuantity(-1)">-</button>
+                        <input type="number" class="quantity-input-modern-detail" id="quantity-input" value="1" min="1" max="${book.stock}" onchange="updateQuantity(parseInt(this.value))">
+                        <button class="quantity-btn-modern-detail" onclick="changeQuantity(1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="product-actions-modern">
+                    <button class="btn btn-primary btn-large" onclick="addToCartAndNotify()" ${book.stock === 0 ? 'disabled' : ''} style="flex: 1;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        ${book.stock > 0 ? 'Thêm vào giỏ hàng' : 'Hết hàng'}
+                    </button>
+                    ${book.stock > 0 ? `
+                        <a href="/checkout?book_id=${book.id}&quantity=1" class="btn btn-outline btn-large" style="flex: 1;">Mua ngay</a>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        // Set full description
+        if (book.description) {
+            document.getElementById('product-description-full').innerHTML = `<p style="line-height: 1.8; font-size: 16px;">${book.description}</p>`;
+        }
+        
+        // Set rating
+        document.getElementById('rating-score').textContent = book.rating_avg.toFixed(1);
+        document.getElementById('rating-count').textContent = `(${Math.floor(Math.random() * 200 + 50)} đánh giá)`;
+        
+        document.title = `${book.title} - Trạm Sách`;
+    } catch (error) {
+        console.error('Error loading product:', error);
+        document.getElementById('product-detail').innerHTML = `
+            <div class="empty-state">
+                <h2>Sách không tồn tại</h2>
+                <a href="/category/all" class="btn btn-primary">Quay lại danh sách</a>
+            </div>
+        `;
+    }
+});
+
+function changeMainImage(src) {
+    document.getElementById('main-image').src = src;
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+function changeQuantity(delta) {
+    const input = document.getElementById('quantity-input');
+    const max = parseInt(input.max);
+    const newValue = Math.max(1, Math.min(max, currentQuantity + delta));
+    currentQuantity = newValue;
+    input.value = newValue;
+}
+
+function updateQuantity(value) {
+    const input = document.getElementById('quantity-input');
+    const max = parseInt(input.max);
+    const newValue = Math.max(1, Math.min(max, value));
+    currentQuantity = newValue;
+    input.value = newValue;
+}
+
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    event.target.classList.add('active');
+}
+
+async function addToCartAndNotify() {
+    const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
+    const success = await BookStore.addToCart(productId, quantity);
+    if (success) {
+        // Optional: redirect to cart after a delay
+        // setTimeout(() => window.location.href = '/cart', 1000);
+    }
+}
+</script>
+{% endblock %}
