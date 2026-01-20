@@ -63,7 +63,7 @@ class CartItem(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     cart_id = Column(Integer, ForeignKey("carts.id"), nullable=False)
-    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id", ondelete="SET NULL"), nullable=True)
     quantity = Column(Integer, default=1, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     
@@ -94,7 +94,7 @@ class OrderItem(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id", ondelete="SET NULL"), nullable=True)
     quantity = Column(Integer, nullable=False)
     price_vnd = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)

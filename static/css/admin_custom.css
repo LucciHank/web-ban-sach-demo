@@ -128,3 +128,33 @@ body {
     background: rgba(255, 255, 255, 0.1) !important;
     color: white !important;
 }
+
+/* Import Excel Button */
+.btn-import-excel {
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 500 !important;
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.25) !important;
+}
+
+.btn-import-excel:hover {
+    background: linear-gradient(135deg, #138496, #0d6e7a) !important;
+    transform: scale(1.02);
+    color: white !important;
+}
+
+/* Quick Actions Bar */
+.quick-actions {
+    display: flex;
+    gap: 8px;
+    padding: 16px 24px;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.quick-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}

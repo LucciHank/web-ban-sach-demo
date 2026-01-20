@@ -1,0 +1,7 @@
+tunnel: 71dadfd9-91f6-4e32-8c5b-cc56060651b7
+credentials-file: C:\Users\NC\.cloudflared\71dadfd9-91f6-4e32-8c5b-cc56060651b7.json
+
+ingress:
+  - hostname: shop.dohoanganh.site
+    service: http://127.0.0.1:8003
+  - service: http_status:404

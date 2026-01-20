@@ -31,7 +31,7 @@ admin = Admin(app, engine, authentication_backend=authentication_backend, templa
 setup_admin(admin)
 
 # Import routers
-from app.routers import products, cart, checkout, search, auth, orders
+from app.routers import products, cart, checkout, search, auth, orders, import_products
 
 app.include_router(products.router, prefix="/api/products", tags=["products"])
 app.include_router(cart.router, prefix="/api/cart", tags=["cart"])
@@ -39,6 +39,7 @@ app.include_router(checkout.router, prefix="/api/checkout", tags=["checkout"])
 app.include_router(search.router, prefix="/api/search", tags=["search"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(orders.router, prefix="/api/orders", tags=["orders"])
+app.include_router(import_products.router, prefix="/api/admin", tags=["admin"])
 
 def render_template(template_name: str, **kwargs):
     """Helper function to render Jinja2 templates"""
@@ -94,6 +95,8 @@ async def profile_page(request: Request):
 async def orders_page(request: Request):
     """Trang danh sách đơn hàng"""
     return render_template("orders.html", request=request)
+
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8003, reload=True)
